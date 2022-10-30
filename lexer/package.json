@@ -2,8 +2,11 @@
   "name": "charplex",
   "version": "0.1.0",
   "description": "Typescript test implementation for a C# lexer",
-  "main": "index.js",
+  "type": "commonjs",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "tsc -p tsconfig.json && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
