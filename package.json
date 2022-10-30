@@ -1,0 +1,28 @@
+{
+  "name": "charplex-repo",
+  "version": "0.1.0",
+  "description": "Typescript test implementation for a C# lexer",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShulkMaster/charplex.git"
+  },
+  "keywords": [
+    "lexer",
+    "c#"
+  ],
+  "author": "shulkmaster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShulkMaster/charplex/issues"
+  },
+  "homepage": "https://github.com/ShulkMaster/charplex#readme",
+  "workspaces": [
+    "lexer"
+  ],
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}
