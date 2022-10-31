@@ -1,12 +1,18 @@
-import { Lexer } from './lexer';
-import {IntegerMachine} from './machines';
+import {Lexer} from './lexer';
+import {IntegerMachine, StringMachine} from './machines';
+import fs from 'fs';
 
-const code = ' 15 0x2B2  47u   0X1A4U'
+const code = fs.readFileSync('sample.txt').toString();
 
 const intMachine = new IntegerMachine(code);
-const lexer = new Lexer(intMachine);
+const stringMachine = new StringMachine(code);
+const lexer = new Lexer([intMachine, stringMachine]);
 lexer.source = code;
+lexer.registerOnMachineChange(m => console.log(code.substring(m.getPointer())));
 
-for (const token of lexer.tokenStream()){
+for (const token of lexer.tokenStream()) {
   console.log(token);
 }
+
+lexer.unregisterOnMachineChange();
+console.log(code.length);

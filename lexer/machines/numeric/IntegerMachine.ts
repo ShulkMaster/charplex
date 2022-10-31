@@ -1,5 +1,5 @@
-import {IMachine} from '../IMachine';
-import {Integer, BaseToken} from 'structs/BaseToken';
+import {IMachine} from 'machines';
+import {BaseToken} from 'structs/BaseToken';
 
 enum IntegerMachineStates {
   Init,
@@ -16,6 +16,7 @@ enum IntegerMachineStates {
 export type IntegerToken = {
   value: number;
   unsigned: boolean;
+  kind: 'decimal' | 'hexadecimal';
 } & BaseToken;
 
 export class IntegerMachine implements IMachine<IntegerToken> {
@@ -25,11 +26,15 @@ export class IntegerMachine implements IMachine<IntegerToken> {
   private readonly isHexDigit = /[0-9a-fA-F]/;
   private start = 0;
   private pointer = 0;
-  public state: IntegerMachineStates = IntegerMachineStates.Init;
+  public state = IntegerMachineStates.Init;
 
 
   constructor(src: string) {
     this.source = src;
+  }
+
+  public get name() {
+    return 'IntegerMachine';
   }
 
   public startFrom(start: number): void {
@@ -53,7 +58,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     return this.pointer;
   }
 
-  public isAccepted(): IntegerToken | false {
+  public isAccepted(): false | IntegerToken {
     for (let i = this.start; this.shouldContinue(); i++) {
       this.pointer = i;
       this.handle(this.source[i]);
@@ -61,8 +66,9 @@ export class IntegerMachine implements IMachine<IntegerToken> {
 
     if (this.state === IntegerMachineStates.Invalid) return false;
 
-    const src = this.source.substring(this.start, this.pointer);
     const unsigned = this.isUnsigned();
+    const end = unsigned ? this.pointer + 1 : this.pointer;
+    const src = this.source.substring(this.start, end);
     const value = this.parseValue(src, unsigned);
 
     return {
@@ -71,7 +77,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       src,
       unsigned,
       value,
-      range: [this.start, this.pointer],
+      range: [this.start, end],
     };
   }
 
@@ -146,7 +152,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     this.state = IntegerMachineStates.Hex;
   }
 
-  private stateToType(): Integer {
+  private stateToType(): IntegerToken['kind'] {
     switch (this.state) {
       case IntegerMachineStates.Numbering:
       case IntegerMachineStates.NumberingHex:
@@ -172,6 +178,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       radix = 16;
     }
     if (unsigned) {
+      // removing u at the end of string
       _src = src.substring(0, this.pointer - 1);
     }
     return parseInt(_src, radix);
