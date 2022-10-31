@@ -76,6 +76,7 @@ export class Lexer {
   }
 
   public* tokenStream(): Generator<MachineToken> {
+    console.log(this.src);
     if (this._state === LexerStates.Error || this._state === LexerStates.Halt) {
       return;
     }
@@ -96,10 +97,10 @@ export class Lexer {
           wasSent = true;
           break;
         default:
-          const token = this.handle(i);
+          const token = this.runMachines(i);
           if (token) {
             wasSent = true;
-            i = this.rangeEnd(token.range);
+            i = Math.max(0, this.rangeEnd(token.range) - 1);
             yield token;
           } else {
             wasSent = false;
@@ -107,8 +108,8 @@ export class Lexer {
           }
       }
       if (wasSent && this.lastErrorRange) {
-        const [start, end] = this.lastErrorRange;
-        const src = this.src.substring(start, end  + 1);
+        const start = this.lastErrorRange[0];
+        const src = this.src.substring(start, i);
         yield {kind: 'error', name: 'Error', range: this.lastErrorRange, src};
         this.lastErrorRange = undefined;
       }
@@ -116,15 +117,17 @@ export class Lexer {
     this._state = LexerStates.Halt;
   }
 
-  private handle(index: number): false | MachineToken {
+  private runMachines(index: number): false | MachineToken {
+    let x: false | MachineToken = false;
     for (const m of this._machines) {
       m.startFrom(index);
       this.listener?.(m);
       const t = m.isAccepted();
       if (t) {
-        return t;
+        x = t;
+        break;
       }
     }
-    return false;
+    return x;
   }
 }

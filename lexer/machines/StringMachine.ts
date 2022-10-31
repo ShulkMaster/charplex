@@ -38,10 +38,10 @@ export class StringMachine implements IMachine<StringToken> {
 
   private shouldContinue(): boolean {
     const s = this.state;
-    const vContinue = s !== StringMachineStates.VString;
-    const regular = s !== StringMachineStates.String;
-    const invalid = s !== StringMachineStates.Invalid;
-    return vContinue || regular || invalid;
+    const vContinue = s === StringMachineStates.VString;
+    const regular = s === StringMachineStates.String;
+    const invalid = s === StringMachineStates.Invalid;
+    return !vContinue && !regular && !invalid;
   }
 
   public get name() {
@@ -62,12 +62,14 @@ export class StringMachine implements IMachine<StringToken> {
 
     if (this.state === StringMachineStates.Invalid) return false;
 
-    const src = this.source.substring(this.start, this.pointer);
+    // FDA stops at closing " and does not include it
+    const end = this.pointer  + 1;
+    const src = this.source.substring(this.start, end);
     const value = this.parseValue(src);
 
     return {
       name: 'stringToken',
-      range: [this.start, this.pointer],
+      range: [this.start, end],
       kind: 'string',
       src,
       value,
@@ -160,7 +162,7 @@ export class StringMachine implements IMachine<StringToken> {
     }
     // removes the " marks from the string
     let modified = src.substring(1, src.length - 1);
-    modified = modified.replace('\\\'', '\'');
+    modified = modified.replace('\\\'', "'");
     modified = modified.replace('\\"', '"');
     modified = modified.replace('\\\\', '\\');
     modified = modified.replace('\\0', '\0');

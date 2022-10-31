@@ -66,8 +66,8 @@ export class IntegerMachine implements IMachine<IntegerToken> {
 
     if (this.state === IntegerMachineStates.Invalid) return false;
 
-    const src = this.source.substring(this.start, this.pointer);
     const unsigned = this.isUnsigned();
+    const src = this.source.substring(this.start, this.pointer);
     const value = this.parseValue(src, unsigned);
 
     return {
@@ -177,6 +177,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       radix = 16;
     }
     if (unsigned) {
+      // removing u at the end of string
       _src = src.substring(0, this.pointer - 1);
     }
     return parseInt(_src, radix);
