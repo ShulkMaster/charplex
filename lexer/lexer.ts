@@ -86,6 +86,8 @@ export class Lexer {
       switch (char) {
         case ' ':
         case '\t':
+        case '\n':
+        case '\r':
           wasSent = true;
           break;
         case '{':

@@ -9,7 +9,6 @@ const stringMachine = new StringMachine(code);
 const identifierMachine = new IdentifiersMachine(code);
 const lexer = new Lexer([intMachine, stringMachine, identifierMachine]);
 lexer.source = code;
-lexer.registerOnMachineChange(m => console.log(code.substring(m.getPointer())));
 
 for (const token of lexer.tokenStream()) {
   console.log(token);

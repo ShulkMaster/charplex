@@ -23,7 +23,6 @@ export class StringMachine implements IMachine<StringToken> {
 
   private readonly source: string;
   private readonly scapeSequences = ['\'', '"', '\\', '0', 'a', 'b', 'f', 'n', 'r', 't', 'v'];
-  private readonly vScape = '"';
   private start = 0;
   private pointer = 0;
   public state = StringMachineStates.Init;
@@ -83,19 +82,22 @@ export class StringMachine implements IMachine<StringToken> {
         this.handleInit(char);
         break;
       case StringMachineStates.Verb:
+        this.handleVerb(char);
         break;
       case StringMachineStates.VText:
+        this.handleVText(char);
         break;
-      case StringMachineStates.VString:
+      case StringMachineStates.VScape:
+        this.handleVScape(char);
         break;
       case StringMachineStates.Regular:
-        this.handRegular(char);
+        this.handleRegular(char);
         break;
       case StringMachineStates.Text:
-        this.handText(char);
+        this.handleText(char);
         break;
       case StringMachineStates.Scape:
-        this.handScape(char);
+        this.handleScape(char);
         break;
     }
   }
@@ -114,7 +116,7 @@ export class StringMachine implements IMachine<StringToken> {
     this.state = StringMachineStates.Invalid;
   }
 
-  private handRegular(char: string): void {
+  private handleRegular(char: string): void {
     if (char === '"') {
       this.state = StringMachineStates.String;
       return;
@@ -134,7 +136,7 @@ export class StringMachine implements IMachine<StringToken> {
     this.state = StringMachineStates.Invalid;
   }
 
-  private handScape(char: string): void {
+  private handleScape(char: string): void {
     const includes = this.scapeSequences.indexOf(char.toLowerCase());
     if (includes === -1) {
       this.state = StringMachineStates.Invalid;
@@ -144,7 +146,7 @@ export class StringMachine implements IMachine<StringToken> {
     this.state = StringMachineStates.Text;
   }
 
-  private handText(char: string): void {
+  private handleText(char: string): void {
     if (char === '"') {
       this.state = StringMachineStates.String;
       return;
@@ -153,6 +155,37 @@ export class StringMachine implements IMachine<StringToken> {
     if (char === '\\') {
       this.state = StringMachineStates.Scape;
     }
+  }
+
+  private handleVerb(char: string): void {
+    if (char === '"') {
+      this.state = StringMachineStates.VText;
+      return;
+    }
+
+    this.state = StringMachineStates.Invalid;
+  }
+
+  private handleVText(char: string): void {
+    if (char === '"') {
+      this.state = StringMachineStates.VString;
+      return;
+    }
+
+    if (char === '\\') {
+      this.state = StringMachineStates.VScape;
+    }
+  }
+
+  private handleVScape(char: string): void {
+    if (char === '"') {
+      this.state = StringMachineStates.VText;
+      return;
+    }
+
+
+
+    this.state = StringMachineStates.Invalid;
   }
 
   private parseValue(src: string) {
