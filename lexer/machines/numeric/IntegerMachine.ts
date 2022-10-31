@@ -67,7 +67,8 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     if (this.state === IntegerMachineStates.Invalid) return false;
 
     const unsigned = this.isUnsigned();
-    const src = this.source.substring(this.start, this.pointer);
+    const end = unsigned ? this.pointer + 1 : this.pointer;
+    const src = this.source.substring(this.start, end);
     const value = this.parseValue(src, unsigned);
 
     return {
@@ -76,7 +77,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       src,
       unsigned,
       value,
-      range: [this.start, this.pointer],
+      range: [this.start, end],
     };
   }
 
