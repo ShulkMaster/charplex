@@ -3,6 +3,7 @@ import {BaseToken} from 'structs';
 
 export type StringToken = {
   value: string;
+  kind: 'string';
 } & BaseToken;
 
 enum StringMachineStates {
@@ -14,12 +15,15 @@ enum StringMachineStates {
   Regular,
   Text,
   Scape,
+  VScape,
   String,
 }
 
 export class StringMachine implements IMachine<StringToken> {
 
   private readonly source: string;
+  private readonly scapeSequences = ['\'', '"', '\\', '0', 'a', 'b', 'f', 'n', 'r', 't', 'v'];
+  private readonly vScape = '"';
   private start = 0;
   private pointer = 0;
   public state = StringMachineStates.Init;
@@ -40,6 +44,11 @@ export class StringMachine implements IMachine<StringToken> {
     return vContinue || regular || invalid;
   }
 
+  public get name() {
+    return 'StringMachine';
+  }
+
+
   public startFrom(start: number): void {
     this.start = start;
     this.state = StringMachineStates.Init;
@@ -59,18 +68,17 @@ export class StringMachine implements IMachine<StringToken> {
     return {
       name: 'stringToken',
       range: [this.start, this.pointer],
-      value: 'luis',
       kind: 'string',
       src,
+      value,
     };
   }
 
   private handle(char: string) {
+    // invalid and final states do not need to be handled as they would halt the DFA
     switch (this.state) {
       case StringMachineStates.Init:
         this.handleInit(char);
-        break;
-      case StringMachineStates.Invalid:
         break;
       case StringMachineStates.Verb:
         break;
@@ -82,10 +90,10 @@ export class StringMachine implements IMachine<StringToken> {
         this.handRegular(char);
         break;
       case StringMachineStates.Text:
+        this.handText(char);
         break;
       case StringMachineStates.Scape:
-        break;
-      case StringMachineStates.String:
+        this.handScape(char);
         break;
     }
   }
@@ -110,7 +118,39 @@ export class StringMachine implements IMachine<StringToken> {
       return;
     }
 
+    // check for other whitespace character
+    if (char === '\\') {
+      this.state = StringMachineStates.Scape;
+      return;
+    }
+
+    if (char !== '\n') {
+      this.state = StringMachineStates.Text;
+      return;
+    }
+
+    this.state = StringMachineStates.Invalid;
+  }
+
+  private handScape(char: string): void {
+    const includes = this.scapeSequences.indexOf(char.toLowerCase());
+    if (includes === -1) {
+      this.state = StringMachineStates.Invalid;
+      return;
+    }
+
     this.state = StringMachineStates.Text;
+  }
+
+  private handText(char: string): void {
+    if (char === '"') {
+      this.state = StringMachineStates.String;
+      return;
+    }
+
+    if (char === '\\') {
+      this.state = StringMachineStates.Scape;
+    }
   }
 
   private parseValue(src: string) {
@@ -119,6 +159,18 @@ export class StringMachine implements IMachine<StringToken> {
       return '';
     }
     // removes the " marks from the string
-    return src.substring(1, src.length - 1);
+    let modified = src.substring(1, src.length - 1);
+    modified = modified.replace('\\\'', '\'');
+    modified = modified.replace('\\"', '"');
+    modified = modified.replace('\\\\', '\\');
+    modified = modified.replace('\\0', '\0');
+    modified = modified.replace('\\a', '\a');
+    modified = modified.replace('\\b', '\b');
+    modified = modified.replace('\\f', '\f');
+    modified = modified.replace('\\n', '\n');
+    modified = modified.replace('\\r', '\r');
+    modified = modified.replace('\\t', '\t');
+    modified = modified.replace('\\v', '\v');
+    return modified;
   }
 }

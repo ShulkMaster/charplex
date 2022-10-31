@@ -3,17 +3,12 @@ export type Range = [
   end: number
 ];
 
-export type Integer = 'decimal' | 'hexadecimal';
-
 export type TokenKind = |
   'keyword' |
-  Integer |
-  'identifier' |
-  'string' ;
+  'identifier';
 
 export type BaseToken = {
   name: string;
   range: Range;
   src: string;
-  kind: TokenKind;
 }

@@ -1,5 +1,5 @@
-import {IMachine} from '../IMachine';
-import {Integer, BaseToken} from 'structs/BaseToken';
+import {IMachine} from 'machines';
+import {BaseToken} from 'structs/BaseToken';
 
 enum IntegerMachineStates {
   Init,
@@ -16,6 +16,7 @@ enum IntegerMachineStates {
 export type IntegerToken = {
   value: number;
   unsigned: boolean;
+  kind: 'decimal' | 'hexadecimal';
 } & BaseToken;
 
 export class IntegerMachine implements IMachine<IntegerToken> {
@@ -30,6 +31,10 @@ export class IntegerMachine implements IMachine<IntegerToken> {
 
   constructor(src: string) {
     this.source = src;
+  }
+
+  public get name() {
+    return 'IntegerMachine';
   }
 
   public startFrom(start: number): void {
@@ -146,7 +151,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     this.state = IntegerMachineStates.Hex;
   }
 
-  private stateToType(): Integer {
+  private stateToType(): IntegerToken['kind'] {
     switch (this.state) {
       case IntegerMachineStates.Numbering:
       case IntegerMachineStates.NumberingHex:
