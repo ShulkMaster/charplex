@@ -1,0 +1,28 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Web interactive site for charplex",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShulkMaster/charplex.git"
+  },
+  "keywords": [
+    "web",
+    "interaqctive",
+    "preview",
+    "simulator",
+    "parser",
+    "charplex"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShulkMaster/charplex/issues"
+  },
+  "homepage": "https://github.com/ShulkMaster/charplex#readme"
+}

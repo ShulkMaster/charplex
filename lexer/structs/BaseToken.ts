@@ -8,7 +8,8 @@ export type Integer = 'decimal' | 'hexadecimal';
 export type TokenKind = |
   'keyword' |
   Integer |
-  'identifier';
+  'identifier' |
+  'string' ;
 
 export type BaseToken = {
   name: string;

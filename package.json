@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/ShulkMaster/charplex#readme",
   "workspaces": [
-    "lexer"
+    "lexer",
+    "web"
   ],
   "devDependencies": {
     "typescript": "^4.8.4"

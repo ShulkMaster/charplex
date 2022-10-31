@@ -25,7 +25,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
   private readonly isHexDigit = /[0-9a-fA-F]/;
   private start = 0;
   private pointer = 0;
-  public state: IntegerMachineStates = IntegerMachineStates.Init;
+  public state = IntegerMachineStates.Init;
 
 
   constructor(src: string) {
@@ -53,7 +53,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     return this.pointer;
   }
 
-  public isAccepted(): IntegerToken | false {
+  public isAccepted(): false | IntegerToken {
     for (let i = this.start; this.shouldContinue(); i++) {
       this.pointer = i;
       this.handle(this.source[i]);
