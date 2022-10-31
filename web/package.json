@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Web interactive site for charplex",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,10 +21,24 @@
     "parser",
     "charplex"
   ],
-  "author": "",
+  "author": "shulkmaster",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ShulkMaster/charplex/issues"
   },
-  "homepage": "https://github.com/ShulkMaster/charplex#readme"
+  "homepage": "https://github.com/ShulkMaster/charplex#readme",
+  "dependencies": {
+    "antd": "^4.23.6",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-monaco-editor": "^0.50.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react": "^2.2.0",
+    "sass": "^1.55.0",
+    "vite": "^3.2.1",
+    "vite-tsconfig-paths": "^3.5.2"
+  }
 }
