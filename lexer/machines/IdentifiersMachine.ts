@@ -1,5 +1,5 @@
 import {IMachine} from './IMachine';
-import {Integer, BaseToken} from 'structs/BaseToken';
+import {BaseToken} from 'structs/BaseToken';
 
 enum IdentifierMachineStates {
   Init,
@@ -13,6 +13,7 @@ enum IdentifierMachineStates {
 
 export type IdentifierToken = {
   value: string;
+  kind: 'identifier';
 } & BaseToken;
 
 export class IdentifiersMachine implements IMachine<IdentifierToken> {
@@ -26,6 +27,10 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
 
   constructor(src: string) {
     this.source = src;
+  }
+
+  get name(): any {
+    return 'IdentifiersMachine';
   }
 
   public startFrom(start: number): void {
@@ -76,13 +81,13 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
         this.initHandler(char);
         break;
       case IdentifierMachineStates.Number:
-        //this.handleLeadZero(char);
+        this.handleNumbers(char);
         break;
       case IdentifierMachineStates.At:
-        //this.handleNumbering(char);
+        this.handleAt(char);
         break;
       case IdentifierMachineStates.UnderScore:
-        //this.handleNumberingHex(char);
+        this.handleUnderScore(char);
         break;
       case IdentifierMachineStates.Letters:
         this.handleLetters(char);
@@ -125,73 +130,65 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
       return;
     }
 
-    this.state = IdentifierMachineStates.Accepted
+    this.state = IdentifierMachineStates.Accepted;
   }
 
-  /*private handleLeadZero(char: string) {
-    if (char.toLowerCase() === 'x') {
-      this.state = IntegerMachineStates.NumberingHex;
-      return;
-    }
+  private handleNumbers(char: string): void {
 
-    if (this.isDigit.test(char)) {
-      this.state = IntegerMachineStates.Numbering;
-      return;
-    }
-
-    this.state = IntegerMachineStates.Invalid;
-  }
-
-  private handleNumbering(char: string) {
     if (this.isDigit.test(char)) {
       return;
     }
 
-    if (char.toLowerCase() === 'u') {
-      this.state = IntegerMachineStates.IntegerU;
+    if (this.isLetter.test(char)) {
+      this.state = IdentifierMachineStates.Letters;
       return;
     }
 
-    this.state = IntegerMachineStates.Integer;
+    if (char === '_') {
+      this.state = IdentifierMachineStates.UnderScore;
+      return;
+    }
+
+    this.state = IdentifierMachineStates.Accepted;
+
   }
 
-  private handleNumberingHex(char: string) {
-    if (this.isHexDigit.test(char)) {
+  private handleAt(char: string): void {
+
+    if (this.isLetter.test(char)) {
+      this.state = IdentifierMachineStates.Letters;
       return;
     }
 
-    if (char.toLowerCase() === 'u') {
-      this.state = IntegerMachineStates.HexU;
+    if (char === '_') {
+      this.state = IdentifierMachineStates.UnderScore;
       return;
     }
 
-    this.state = IntegerMachineStates.Hex;
-  }*/
+    this.state = IdentifierMachineStates.Invalid;
+  }
 
-  /*private stateToType(): Integer {
-    switch (this.state) {
-      case IdentifierMachineStates.At:
-      case IdentifierMachineStates.Invalid:
-        case IdentifierMachineStates.UnderScore:
-      case IdentifierMachineStates.Init:
-        throw new Error('Invalid stated reached');
-      case IdentifierMachineStates.Number:
-        return 'decimal';
-      case IdentifierMachineStates.Letters:
-        return 'string';
-    }
-  }*/
+  private handleUnderScore(char: string): void {
 
- /* private parseValue(src: string) {
-    const isHex = this.state === IntegerMachineStates.Hex || this.state === IntegerMachineStates.HexU;
-    let _src = src;
-    let radix = 10;
-    if (isHex) {
-      radix = 16;
+    if (char === '_') {
+      return;
     }
-    if (unsigned) {
-      _src = src.substring(0, this.pointer - 1);
+
+    if (this.isLetter.test(char)) {
+      this.state = IdentifierMachineStates.Letters;
+      return;
     }
-    return parseInt(_src, radix);
-  }*/
+
+    if (this.isDigit.test(char)) {
+      this.state = IdentifierMachineStates.Number;
+      return;
+    }
+
+    if (char === '@') {
+      this.state = IdentifierMachineStates.Invalid;
+      return;
+    }
+
+    this.state = IdentifierMachineStates.Accepted;
+  }
 }
