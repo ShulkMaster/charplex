@@ -2,8 +2,9 @@
   "name": "charplex",
   "version": "0.1.0",
   "description": "Typescript test implementation for a C# lexer",
-  "type": "commonjs",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "tsc -p tsconfig.json && node dist/index.js",

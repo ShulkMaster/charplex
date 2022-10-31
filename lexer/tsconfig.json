@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "dist",
     "sourceMap": true,

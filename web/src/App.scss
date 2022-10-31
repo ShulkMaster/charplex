@@ -17,16 +17,24 @@
 .app-content {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
+  margin-top: 16px;
   height: CALC(100vh - 148px);
 }
 
-.react-monaco-editor-container {
-  flex-grow: 2;
-  flex-basis: 80%;
-  margin-top: 15px;
-  min-width: 450px;
+.file-bar {
+  width: 15%;
+  min-width: 85px;
 }
 
-.file-bar {
-  flex-basis: 20%;
+.token-list {
+  width: 20%;
+  padding-left: 1.5em;
+  min-width: 185px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.footer {
+  background-color: #c4c4c4;
 }
