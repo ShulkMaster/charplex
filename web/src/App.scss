@@ -1,0 +1,32 @@
+.logo {
+  width: 40px;
+}
+
+.app-header {
+  display: flex;
+  width: 100%;
+}
+
+.app-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 1em;
+}
+
+.app-content {
+  display: flex;
+  flex-wrap: wrap;
+  height: CALC(100vh - 148px);
+}
+
+.react-monaco-editor-container {
+  flex-grow: 2;
+  flex-basis: 80%;
+  margin-top: 15px;
+  min-width: 450px;
+}
+
+.file-bar {
+  flex-basis: 20%;
+}
