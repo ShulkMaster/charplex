@@ -1,12 +1,13 @@
 import {Lexer} from './lexer';
-import {IntegerMachine, StringMachine} from './machines';
+import {IdentifiersMachine, IntegerMachine, StringMachine} from './machines';
 import fs from 'fs';
 
 const code = fs.readFileSync('sample.txt').toString();
 
 const intMachine = new IntegerMachine(code);
 const stringMachine = new StringMachine(code);
-const lexer = new Lexer([intMachine, stringMachine]);
+const identifierMachine = new IdentifiersMachine(code);
+const lexer = new Lexer([intMachine, stringMachine, identifierMachine]);
 lexer.source = code;
 lexer.registerOnMachineChange(m => console.log(code.substring(m.getPointer())));
 
