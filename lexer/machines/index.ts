@@ -1,5 +1,6 @@
 import {IntegerToken} from './numeric/IntegerMachine';
 import { IdentifierToken } from './IdentifiersMachine'
+import {OperatorToken} from './OperatorsMachine';
 import {StringToken} from './StringMachine';
 import {BaseToken, Range} from 'structs';
 
@@ -7,6 +8,7 @@ export * from './IMachine';
 export * from './StringMachine';
 export * from './numeric/IntegerMachine';
 export * from './IdentifiersMachine';
+export * from './OperatorsMachine';
 
 export type OpenBrace = {
   name: 'OpenBrace';
@@ -33,4 +35,5 @@ export type MachineToken = |
   CloseBrace |
   StringToken |
   IdentifierToken |
+  OperatorToken |
   ErrorToken;

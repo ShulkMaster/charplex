@@ -1,5 +1,5 @@
 import {Lexer} from './lexer';
-import {IdentifiersMachine, IntegerMachine, StringMachine} from './machines';
+import {IdentifiersMachine, OperatorsMachine, IntegerMachine, StringMachine} from './machines';
 import fs from 'fs';
 
 const code = fs.readFileSync('sample.txt').toString();
@@ -7,7 +7,8 @@ const code = fs.readFileSync('sample.txt').toString();
 const intMachine = new IntegerMachine(code);
 const stringMachine = new StringMachine(code);
 const identifierMachine = new IdentifiersMachine(code);
-const lexer = new Lexer([intMachine, stringMachine, identifierMachine]);
+const operatorMachine = new OperatorsMachine(code);
+const lexer = new Lexer([intMachine, stringMachine, operatorMachine, identifierMachine]);
 lexer.source = code;
 
 for (const token of lexer.tokenStream()) {
