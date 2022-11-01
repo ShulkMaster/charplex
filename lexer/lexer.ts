@@ -133,7 +133,6 @@ export class Lexer {
   }
 
   public* tokenStream(): Generator<MachineToken> {
-    console.log(this.src);
     if (this._state === LexerStates.Error || this._state === LexerStates.Halt) {
       return;
     }

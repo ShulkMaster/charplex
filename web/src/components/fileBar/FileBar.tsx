@@ -38,7 +38,7 @@ export const FileBar = (p: FileBarProps) => {
       render: (us: SymbolUsage[], _, i) => {
         return us.map(u => u.token.range)
           .map(r => JSON.stringify(r))
-          .join(',');
+          .join(' ');
       },
     },
   ];

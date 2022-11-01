@@ -60,15 +60,18 @@ export class FloatMachine implements IMachine<FloatMachineToken> {
     }
   }
 
+  private isOk(): boolean {
+    const s = this.state;
+    return s === FloatMachineStates.Double ||
+      s === FloatMachineStates.Float ||
+      s === FloatMachineStates.Decimal;
+  }
+
   private shouldContinue(): boolean {
     const s = this.state;
-    return this.pointer <= this.source.length &&
-      !(
-        s === FloatMachineStates.Invalid ||
-        s === FloatMachineStates.Double ||
-        s === FloatMachineStates.Float ||
-        s === FloatMachineStates.Decimal
-      );
+    return this.source.length - 1 > this.pointer &&
+      s !== FloatMachineStates.Invalid &&
+      !this.isOk();
   }
 
 
@@ -78,7 +81,7 @@ export class FloatMachine implements IMachine<FloatMachineToken> {
       this.handle(this.source[i]);
     }
 
-    if (this.state === FloatMachineStates.Invalid) return false;
+    if (!this.isOk()) return false;
     const src = this.source.substring(this.start, this.pointer);
     const value = this.parseValue(src);
 
