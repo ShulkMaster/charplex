@@ -3,6 +3,7 @@ import { IdentifierToken } from './IdentifiersMachine'
 import {KeywordToken} from './KeywordMachine'
 import {OperatorToken} from './OperatorsMachine';
 import {StringToken} from './StringMachine';
+import { CommentToken } from './CommentsMachine';
 import {BaseToken, Range} from 'structs';
 import {FloatMachineToken} from './numeric/FloatMachine';
 
@@ -13,6 +14,7 @@ export * from './numeric/FloatMachine';
 export * from './IdentifiersMachine';
 export * from './KeywordMachine';
 export * from './OperatorsMachine';
+export * from './CommentsMachine';
 
 export type OpenBrace = {
   name: 'OpenBrace';
@@ -65,6 +67,7 @@ export type MachineToken = |
   OpenParenthesis |
   CloseParenthesis |
   SemiColon |
+  CommentToken |
   IntegerToken |
   FloatMachineToken |
   CloseBrace |
