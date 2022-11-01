@@ -4,7 +4,7 @@ import logo from 'assets/img/csharp.svg';
 import {FileBar} from './components/fileBar/FileBar';
 import {TokenList} from './components/TokenList';
 import MonacoEditor from 'react-monaco-editor';
-import {Lexer, MachineToken, StringMachine, IntegerMachine, IdentifiersMachine, FloatMachine, KeywordMachine, OperatorsMachine} from 'charplex';
+import {Lexer, MachineToken, StringMachine, IntegerMachine, IdentifiersMachine, FloatMachine, KeywordMachine, OperatorsMachine, CommentsMachine } from 'charplex';
 import 'antd/dist/antd.min.css';
 import './App.scss';
 
@@ -23,6 +23,7 @@ export const App = () => {
 
 
   const onRun = () => {
+    const commentsMachine = new CommentsMachine(code);
     const intMachine = new IntegerMachine(code);
     const stringMachine = new StringMachine(code);
     const identifierMachine = new IdentifiersMachine(code);
@@ -30,7 +31,7 @@ export const App = () => {
     const keywordsMachine = new KeywordMachine(code);
     const operatorsMachine = new OperatorsMachine(code);
 
-    const lexer = new Lexer([keywordsMachine, floatMachine, operatorsMachine, intMachine, stringMachine, identifierMachine]);
+    const lexer = new Lexer([commentsMachine, keywordsMachine, floatMachine, operatorsMachine, intMachine, stringMachine, identifierMachine]);
     lexer.source = code;
 
     const batch: MachineToken[] = [];
