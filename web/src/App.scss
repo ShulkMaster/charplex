@@ -1,0 +1,40 @@
+.logo {
+  width: 40px;
+}
+
+.app-header {
+  display: flex;
+  width: 100%;
+}
+
+.app-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 1em;
+}
+
+.app-content {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 16px;
+  height: CALC(100vh - 148px);
+}
+
+.file-bar {
+  width: 15%;
+  min-width: 85px;
+}
+
+.token-list {
+  width: 20%;
+  padding-left: 1.5em;
+  min-width: 185px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.footer {
+  background-color: #c4c4c4;
+}

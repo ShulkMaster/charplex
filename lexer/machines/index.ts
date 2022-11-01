@@ -4,10 +4,12 @@ import {KeywordToken} from './KeywordMachine'
 import {OperatorToken} from './OperatorsMachine';
 import {StringToken} from './StringMachine';
 import {BaseToken, Range} from 'structs';
+import {FloatMachineToken} from './numeric/FloatMachine';
 
 export * from './IMachine';
 export * from './StringMachine';
 export * from './numeric/IntegerMachine';
+export * from './numeric/FloatMachine';
 export * from './IdentifiersMachine';
 export * from './KeywordMachine';
 export * from './OperatorsMachine';
@@ -34,6 +36,7 @@ export type ErrorToken = {
 export type MachineToken = |
   OpenBrace |
   IntegerToken |
+  FloatMachineToken |
   CloseBrace |
   StringToken |
   KeywordToken |
