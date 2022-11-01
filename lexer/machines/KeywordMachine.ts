@@ -7,7 +7,6 @@ enum KeywordMachineStates {
   Accepted,
   isLetter,
   isKeyword
-  
 }
 
 export type KeywordToken = {
@@ -20,6 +19,8 @@ export class KeywordMachine implements IMachine<KeywordToken> {
   private readonly source: string;
   private start = 0;
   private pointer = 0;
+  private word = '';
+  private keyword = '';
   public state: KeywordMachineStates = KeywordMachineStates.Init;
 
   constructor(src: string) {
@@ -37,7 +38,8 @@ export class KeywordMachine implements IMachine<KeywordToken> {
 
   private shouldStop() : boolean {
     return this.state === KeywordMachineStates.Invalid ||
-      this.state === KeywordMachineStates.Accepted || this.pointer > this.source.length
+      this.state === KeywordMachineStates.Accepted ||
+      this.pointer > this.source.length
   }
 
   public getPointer(): number {
@@ -52,8 +54,8 @@ export class KeywordMachine implements IMachine<KeywordToken> {
 
     if (this.state === KeywordMachineStates.Invalid) return false;
 
-    const src = this.source.substring(this.start, this.pointer);
-    const value = src; //this.parseValue(src);
+    const src = this.keyword;
+    const value = this.keyword; //this.parseValue(src);
 
     return {
       name: 'KeywordToken',
@@ -73,76 +75,132 @@ export class KeywordMachine implements IMachine<KeywordToken> {
         this.handlerLetter(char);
         break;
       case KeywordMachineStates.isKeyword:
-        this.handlerIsKeyboard(char);
-      
+        this.handlerIsKeyword(this.word);
         break; 
     }
   }
 
   private initHandler(char: string): void {
+
+    if(/^[a-z]+$/.test(char)){
+      this.state = KeywordMachineStates.isLetter;
+      this.word += char;
+      return;
+    }
+
     this.state = KeywordMachineStates.Invalid;
   }
 
-  private handlerLetter(char: string): void{
-    if(/^[a-z]+$/.test(char)){
-      this.state = KeywordMachineStates.isLetter
+  private handlerLetter(char: string): void {
+
+    if(/^[a-z]+$/.test(char)) {
+      this.state = KeywordMachineStates.isLetter;
+      this.word += char;
       return;
     }
-    this.state = KeywordMachineStates.Invalid
+
+    this.state = KeywordMachineStates.isKeyword
   }
 
-  private handlerIsKeyboard(char: string): void{
+  private handlerIsKeyword(char: string): void {
     if(char === 'bool'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
       return;
     }
     if(char === 'break'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'char'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'class'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'else'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'float'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'for'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'if'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'int'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'new'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'return'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'static'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'string'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'using'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'void'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
     if(char === 'while'){
-      this.state = KeywordMachineStates.isKeyword
+      this.state = KeywordMachineStates.Accepted;
+      this.keyword = char;
+      this.word = '';
+      return;
     }
+
+    this.word = '';
     this.state = KeywordMachineStates.Invalid
   }
-
-  
 }
