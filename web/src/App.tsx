@@ -4,9 +4,25 @@ import logo from 'assets/img/csharp.svg';
 import {FileBar} from './components/fileBar/FileBar';
 import {TokenList} from './components/TokenList';
 import MonacoEditor from 'react-monaco-editor';
-import {Lexer, MachineToken, StringMachine, IntegerMachine, IdentifiersMachine, FloatMachine, KeywordMachine, OperatorsMachine} from 'charplex';
+import {
+  Lexer,
+  MachineToken,
+  StringMachine,
+  IntegerMachine,
+  IdentifiersMachine,
+  FloatMachine,
+  KeywordMachine,
+  OperatorsMachine,
+  SymbolTable,
+  SymbolTableManager,
+} from 'charplex';
 import 'antd/dist/antd.min.css';
 import './App.scss';
+
+type AppState = {
+  tokens: MachineToken[];
+  table: SymbolTable | null;
+}
 
 export const App = () => {
 
@@ -19,10 +35,14 @@ export const App = () => {
     '        }\n' +
     '    }\n' +
     '}');
-  const [tokens, setTokens] = useState<MachineToken[]>([]);
+  const [state, setState] = useState<AppState>({
+    tokens: [],
+    table: null,
+  });
 
 
   const onRun = () => {
+    const table = new SymbolTableManager();
     const intMachine = new IntegerMachine(code);
     const stringMachine = new StringMachine(code);
     const identifierMachine = new IdentifiersMachine(code);
@@ -30,7 +50,15 @@ export const App = () => {
     const keywordsMachine = new KeywordMachine(code);
     const operatorsMachine = new OperatorsMachine(code);
 
-    const lexer = new Lexer([keywordsMachine, floatMachine, operatorsMachine, intMachine, stringMachine, identifierMachine]);
+    const lexer = new Lexer(
+      table,
+      keywordsMachine,
+      floatMachine,
+      operatorsMachine,
+      intMachine,
+      stringMachine,
+      identifierMachine,
+    );
     lexer.source = code;
 
     const batch: MachineToken[] = [];
@@ -39,7 +67,11 @@ export const App = () => {
     }
 
     lexer.unregisterOnMachineChange();
-    setTokens(batch);
+    setState({
+      tokens: batch,
+      table: table.getGlobal(),
+    });
+    console.log(table.getGlobal());
   };
 
   return (
@@ -60,7 +92,7 @@ export const App = () => {
           onChange={setCode}
           editorDidMount={console.log}
         />
-        <TokenList tokens={tokens}/>
+        <TokenList tokens={state.tokens}/>
       </Layout.Content>
       <Layout.Footer className="footer">
         <div>
