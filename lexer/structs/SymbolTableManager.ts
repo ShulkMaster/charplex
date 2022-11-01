@@ -41,6 +41,7 @@ export class SymbolTableManager implements ISymbolManager {
   public registerSymbol(identifier: IdentifierToken): void {
     const symbol = this._scope.symbols[identifier.src];
     if (symbol) {
+      console.log('sm registed');
       symbol.usages.push({
         col: 0,
         row: 0,

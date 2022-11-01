@@ -1,5 +1,6 @@
 import {IMachine} from './IMachine';
 import {BaseToken} from 'structs/BaseToken';
+import {ISymbolManager} from 'structs';
 
 enum IdentifierMachineStates {
   Init,
@@ -24,9 +25,11 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
   private start = 0;
   private pointer = 0;
   public state: IdentifierMachineStates = IdentifierMachineStates.Init;
+  private _sm: ISymbolManager;
 
-  constructor(src: string) {
+  constructor(src: string, sm: ISymbolManager) {
     this.source = src;
+    this._sm = sm;
   }
 
   get name(): any {
@@ -43,14 +46,6 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
       this.state === IdentifierMachineStates.Accepted || this.pointer > this.source.length
   }
 
-  /*private shouldContinue(): boolean {
-    return this.state === IdentifierMachineStates.Number ||
-      this.state === IdentifierMachineStates.At ||
-      this.state === IdentifierMachineStates.Letters ||
-      this.state === IdentifierMachineStates.UnderScore ||
-      this.state === IdentifierMachineStates.Init;
-  }*/
-
   public getPointer(): number {
     return this.pointer;
   }
@@ -64,15 +59,16 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
     if (this.state === IdentifierMachineStates.Invalid) return false;
 
     const src = this.source.substring(this.start, this.pointer);
-    const value = src; //this.parseValue(src);
-
-    return {
+    const value = src;
+    const identifier: IdentifierToken = {
       name: 'IdentifierToken',
       kind: 'identifier',
       src,
       value,
       range: [this.start, this.pointer],
     };
+    this._sm.registerSymbol(identifier);
+    return identifier;
   }
 
   private handle(char: string) {
@@ -91,7 +87,7 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
         break;
       case IdentifierMachineStates.Letters:
         this.handleLetters(char);
-        break;  
+        break;
     }
   }
 

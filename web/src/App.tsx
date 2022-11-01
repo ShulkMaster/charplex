@@ -45,7 +45,7 @@ export const App = () => {
     const table = new SymbolTableManager();
     const intMachine = new IntegerMachine(code);
     const stringMachine = new StringMachine(code);
-    const identifierMachine = new IdentifiersMachine(code);
+    const identifierMachine = new IdentifiersMachine(code, table);
     const floatMachine = new FloatMachine(code);
     const keywordsMachine = new KeywordMachine(code);
     const operatorsMachine = new OperatorsMachine(code);
@@ -81,24 +81,23 @@ export const App = () => {
         <p className="app-title">Charplex</p>
       </Layout.Header>
       <Layout.Content className="app-content">
-        <FileBar onRun={onRun}/>
         <MonacoEditor
           height="100%"
-          width="65%"
+          width="45%"
           language="c#"
           theme="vs-dark"
           value={code}
-          options={{'semanticHighlighting.enabled': false, fontSize: 20}}
+          options={{
+            'semanticHighlighting.enabled': false, fontSize: 20, minimap: {
+              enabled: false,
+            },
+          }}
           onChange={setCode}
           editorDidMount={console.log}
         />
+        <FileBar onRun={onRun} sb={state.table}/>
         <TokenList tokens={state.tokens}/>
       </Layout.Content>
-      <Layout.Footer className="footer">
-        <div>
-          <p>ALV</p>
-        </div>
-      </Layout.Footer>
     </Layout>
   );
 };

@@ -9,8 +9,7 @@ import {
   OpenParenthesis,
   SemiColon,
 } from './machines';
-import {Range} from './structs';
-import {SymbolTableManager} from './structs/SymbolTableManager';
+import {Range, SymbolTableManager} from 'structs';
 
 enum LexerStates {
   Init,
