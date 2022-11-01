@@ -23,5 +23,11 @@
   "bugs": {
     "url": "https://github.com/ShulkMaster/charplex/issues"
   },
-  "homepage": "https://github.com/ShulkMaster/charplex#readme"
+  "homepage": "https://github.com/ShulkMaster/charplex#readme",
+  "devDependencies": {
+    "@types/object-hash": "^2.2.1"
+  },
+  "dependencies": {
+    "object-hash": "^3.0.0"
+  }
 }

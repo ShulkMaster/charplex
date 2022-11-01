@@ -3,10 +3,6 @@ export type Range = [
   end: number
 ];
 
-export type TokenKind = |
-  'keyword' |
-  'identifier';
-
 export type BaseToken = {
   name: string;
   range: Range;

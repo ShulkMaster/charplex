@@ -48,11 +48,18 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       this.state === IntegerMachineStates.IntegerU;
   }
 
+  private isOk(): boolean {
+    const s = this.state;
+    return s === IntegerMachineStates.Integer ||
+      s === IntegerMachineStates.IntegerU ||
+      s === IntegerMachineStates.Hex ||
+      s === IntegerMachineStates.HexU;
+  }
+
   private shouldContinue(): boolean {
-    return this.state === IntegerMachineStates.Numbering ||
-      this.state === IntegerMachineStates.NumberingHex ||
-      this.state === IntegerMachineStates.LeadZero ||
-      this.state === IntegerMachineStates.Init;
+    return this.source.length - 1 > this.pointer &&
+      this.state !== IntegerMachineStates.Invalid &&
+      !this.isOk();
   }
 
   public getPointer(): number {
@@ -64,9 +71,14 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       this.pointer = i;
       this.handle(this.source[i]);
     }
+    const isOnNumber = this.state === IntegerMachineStates.Numbering || this.state === IntegerMachineStates.NumberingHex;
+    if (!(this.isOk() || isOnNumber)) {
+      return false;
+    }
 
-    if (this.state === IntegerMachineStates.Invalid) return false;
-
+    if (isOnNumber) {
+      this.pointer++;
+    }
     const unsigned = this.isUnsigned();
     const end = unsigned ? this.pointer + 1 : this.pointer;
     const src = this.source.substring(this.start, end);
@@ -155,16 +167,16 @@ export class IntegerMachine implements IMachine<IntegerToken> {
 
   private stateToType(): IntegerToken['name'] {
     switch (this.state) {
-      case IntegerMachineStates.Numbering:
-      case IntegerMachineStates.NumberingHex:
       case IntegerMachineStates.Invalid:
       case IntegerMachineStates.Init:
         throw new Error('Invalid stated reached');
+      case IntegerMachineStates.Numbering:
       case IntegerMachineStates.Integer:
       case IntegerMachineStates.IntegerU:
         return 'decimal';
       case IntegerMachineStates.Hex:
       case IntegerMachineStates.HexU:
+      case IntegerMachineStates.NumberingHex:
         return 'hexadecimal';
       case IntegerMachineStates.LeadZero:
         return 'decimal';

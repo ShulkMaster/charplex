@@ -15,7 +15,7 @@ export const TokenList = (p: TokenListProps) => {
         renderItem={(token: MachineToken) => (
           <List.Item>
             <p>{token.name}: {token.src}</p>
-            <ReactJson src={token} collapsed={false}/>
+            <ReactJson src={token} collapsed={true}/>
           </List.Item>
         )}
       />

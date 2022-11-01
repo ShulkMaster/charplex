@@ -1,5 +1,15 @@
-import {CloseBrace, CloseBracket, CloseParenthesis, IMachine, IntegerToken, MachineToken, OpenBrace, OpenBracket, OpenParenthesis, SemiColon} from './machines';
-import {Range} from './structs';
+import {
+  CloseBrace,
+  CloseBracket,
+  CloseParenthesis,
+  IMachine,
+  MachineToken,
+  OpenBrace,
+  OpenBracket,
+  OpenParenthesis,
+  SemiColon,
+} from './machines';
+import {Range, SymbolTableManager} from 'structs';
 
 enum LexerStates {
   Init,
@@ -17,12 +27,12 @@ export class Lexer {
   private src: string = '';
   private _state = LexerStates.Init;
   private lastErrorRange: Range | undefined = undefined;
+  private readonly table: SymbolTableManager;
 
-  constructor(machines: IMachine<MachineToken>[]) {
-    this._machines = machines;
-    if (machines.length < 1) {
-      throw new Error('Lexer requires at least 1 machine to run');
-    }
+  constructor(table: SymbolTableManager, machine: IMachine<MachineToken>, ...machines: IMachine<MachineToken>[]) {
+    this.table = table;
+    this._machines = [machine];
+    this._machines.push(...machines);
   }
 
   public set source(src: string) {
@@ -56,23 +66,25 @@ export class Lexer {
   }
 
   private makeOpenBraceToken(index: number): OpenBrace {
-    return {
+    const opener: OpenBrace = {
       kind: 'punctuation',
       name: 'OpenBrace',
       openScope: '',
       range: [index, index + 1],
       src: '{',
     };
+    return this.table.openScope(opener);
   }
 
   private makeCloseBraceToken(index: number): CloseBrace {
-    return {
+    const closer: CloseBrace = {
       closeScope: '',
       kind: 'punctuation',
       name: 'CloseBrace',
       range: [index, index + 1],
       src: '}',
     };
+    return this.table.closeScope(closer);
   }
 
   private makeOpenBracketToken(index: number): OpenBracket {
@@ -121,7 +133,6 @@ export class Lexer {
   }
 
   public* tokenStream(): Generator<MachineToken> {
-    console.log(this.src);
     if (this._state === LexerStates.Error || this._state === LexerStates.Halt) {
       return;
     }
@@ -154,15 +165,15 @@ export class Lexer {
         case '(':
           yield this.makeOpenParenthesisToken(i);
           wasSent = true;
-          break;  
+          break;
         case ')':
           yield this.makeCloseParenthesisToken(i);
           wasSent = true;
-          break;  
+          break;
         case ';':
           yield this.makeSemiColon(i);
           wasSent = true;
-          break;  
+          break;
         default:
           const token = this.runMachines(i);
           if (token) {
