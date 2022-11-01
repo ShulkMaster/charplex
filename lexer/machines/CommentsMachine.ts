@@ -78,8 +78,10 @@ export class CommentsMachine implements IMachine<CommentToken> {
         this.handleDoubleSlash(char);
         break;
       case CommentsMachineStates.Commenting:
+        this.handleCommenting(char);
         break;
       case CommentsMachineStates.Asterisk:
+        this.handleAsterisk(char);
         break;  
     }
   }
@@ -112,6 +114,22 @@ export class CommentsMachine implements IMachine<CommentToken> {
   private handleDoubleSlash(char: string) : void {
     if (this.isLineBreak.test(char)) {
       this.state = CommentsMachineStates.Accepted;
+    }
+  }
+
+  private handleCommenting(char: string) : void {
+    
+    if (char === '*') {
+      this.state = CommentsMachineStates.Asterisk;
+      return;
+    }
+
+  }
+
+  private handleAsterisk(char: string) : void {
+    if (char === '/') {
+      this.state = CommentsMachineStates.Accepted;
+      return;
     }
   }
 }
