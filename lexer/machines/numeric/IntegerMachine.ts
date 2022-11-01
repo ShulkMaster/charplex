@@ -14,9 +14,10 @@ enum IntegerMachineStates {
 }
 
 export type IntegerToken = {
+  name: 'decimal' | 'hexadecimal';
   value: number;
   unsigned: boolean;
-  kind: 'decimal' | 'hexadecimal';
+  kind: 'IntegerToken';
 } & BaseToken;
 
 export class IntegerMachine implements IMachine<IntegerToken> {
@@ -72,8 +73,8 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     const value = this.parseValue(src, unsigned);
 
     return {
-      name: 'IntegerToken',
-      kind: this.stateToType(),
+      name: this.stateToType(),
+      kind: 'IntegerToken',
       src,
       unsigned,
       value,
@@ -152,7 +153,7 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     this.state = IntegerMachineStates.Hex;
   }
 
-  private stateToType(): IntegerToken['kind'] {
+  private stateToType(): IntegerToken['name'] {
     switch (this.state) {
       case IntegerMachineStates.Numbering:
       case IntegerMachineStates.NumberingHex:
