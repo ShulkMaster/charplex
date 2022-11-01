@@ -1,4 +1,4 @@
-import {CloseBrace, IMachine, IntegerToken, MachineToken, OpenBrace} from './machines';
+import {CloseBrace, CloseBracket, CloseParenthesis, IMachine, IntegerToken, MachineToken, OpenBrace, OpenBracket, OpenParenthesis, SemiColon} from './machines';
 import {Range} from './structs';
 
 enum LexerStates {
@@ -75,6 +75,51 @@ export class Lexer {
     };
   }
 
+  private makeOpenBracketToken(index: number): OpenBracket {
+    return {
+      kind: 'punctuation',
+      name: 'OpenBracket',
+      range: [index, index + 1],
+      src: '[',
+    };
+  }
+
+  private makeCloseBracketToken(index: number): CloseBracket {
+    return {
+      kind: 'punctuation',
+      name: 'CloseBracket',
+      range: [index, index + 1],
+      src: ']',
+    };
+  }
+
+  private makeOpenParenthesisToken(index: number): OpenParenthesis {
+    return {
+      kind: 'punctuation',
+      name: 'OpenParenthesis',
+      range: [index, index + 1],
+      src: '(',
+    };
+  }
+
+  private makeCloseParenthesisToken(index: number): CloseParenthesis {
+    return {
+      kind: 'punctuation',
+      name: 'CloseParenthesis',
+      range: [index, index + 1],
+      src: ')',
+    };
+  }
+
+  private makeSemiColon(index: number): SemiColon {
+    return {
+      kind: 'punctuation',
+      name: 'SemiColon',
+      range: [index, index + 1],
+      src: ';',
+    };
+  }
+
   public* tokenStream(): Generator<MachineToken> {
     console.log(this.src);
     if (this._state === LexerStates.Error || this._state === LexerStates.Halt) {
@@ -98,6 +143,26 @@ export class Lexer {
           yield this.makeCloseBraceToken(i);
           wasSent = true;
           break;
+        case '[':
+          yield this.makeOpenBracketToken(i);
+          wasSent = true;
+          break;
+        case ']':
+          yield this.makeCloseBracketToken(i);
+          wasSent = true;
+          break;
+        case '(':
+          yield this.makeOpenParenthesisToken(i);
+          wasSent = true;
+          break;  
+        case ')':
+          yield this.makeCloseParenthesisToken(i);
+          wasSent = true;
+          break;  
+        case ';':
+          yield this.makeSemiColon(i);
+          wasSent = true;
+          break;  
         default:
           const token = this.runMachines(i);
           if (token) {

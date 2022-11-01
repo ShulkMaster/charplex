@@ -149,11 +149,16 @@ export class FloatMachine implements IMachine<FloatMachineToken> {
     }
 
     if (char.toLowerCase() === 'm') {
+      this.state = FloatMachineStates.Decimal;
+      return;
+    }
+
+    if (char.toLowerCase() === 'd') {
       this.state = FloatMachineStates.Double;
       return;
     }
 
-    this.state = FloatMachineStates.Double;
+    this.state = FloatMachineStates.Invalid;
   }
 
   handleDNumbering(char: string) {

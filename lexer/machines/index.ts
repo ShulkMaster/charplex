@@ -26,6 +26,31 @@ export type CloseBrace = {
   kind: 'punctuation';
 } & BaseToken;
 
+export type OpenBracket = {
+  name: 'OpenBracket';
+  kind: 'punctuation';
+} & BaseToken;
+
+export type CloseBracket = {
+  name: 'CloseBracket';
+  kind: 'punctuation';
+} & BaseToken;
+
+export type OpenParenthesis = {
+  name: 'OpenParenthesis';
+  kind: 'punctuation';
+} & BaseToken;
+
+export type CloseParenthesis = {
+  name: 'CloseParenthesis';
+  kind: 'punctuation';
+} & BaseToken;
+
+export type SemiColon = {
+  name: 'SemiColon';
+  kind: 'punctuation';
+} & BaseToken;
+
 export type ErrorToken = {
   name: 'Error';
   kind: 'error';
@@ -35,6 +60,11 @@ export type ErrorToken = {
 
 export type MachineToken = |
   OpenBrace |
+  OpenBracket |
+  CloseBracket |
+  OpenParenthesis |
+  CloseParenthesis |
+  SemiColon |
   IntegerToken |
   FloatMachineToken |
   CloseBrace |
