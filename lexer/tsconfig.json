@@ -4,12 +4,14 @@
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "module": "CommonJS",
+    "module": "ESNext",
+    "declaration": true,
     "moduleResolution": "Node",
     "outDir": "dist",
     "sourceMap": true,
     "target": "es6",
     "esModuleInterop": true,
+    "composite": true,
     "types": [
       "node"
     ]
