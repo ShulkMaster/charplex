@@ -4,7 +4,7 @@ import logo from 'assets/img/csharp.svg';
 import {FileBar} from './components/fileBar/FileBar';
 import {TokenList} from './components/TokenList';
 import MonacoEditor from 'react-monaco-editor';
-import {Lexer, MachineToken, StringMachine, IntegerMachine, IdentifiersMachine} from 'charplex';
+import {Lexer, MachineToken, StringMachine, IntegerMachine, IdentifiersMachine, FloatMachine} from 'charplex';
 import 'antd/dist/antd.min.css';
 import './App.scss';
 
@@ -26,7 +26,8 @@ export const App = () => {
     const intMachine = new IntegerMachine(code);
     const stringMachine = new StringMachine(code);
     const identifierMachine = new IdentifiersMachine(code);
-    const lexer = new Lexer([intMachine, stringMachine, identifierMachine]);
+    const floatMachine = new FloatMachine(code);
+    const lexer = new Lexer([intMachine, floatMachine, stringMachine, identifierMachine]);
     lexer.source = code;
 
     const batch: MachineToken[] = [];
@@ -36,11 +37,6 @@ export const App = () => {
 
     lexer.unregisterOnMachineChange();
     setTokens(batch);
-  };
-
-
-  const options = {
-    selectOnLineNumbers: true,
   };
 
   return (

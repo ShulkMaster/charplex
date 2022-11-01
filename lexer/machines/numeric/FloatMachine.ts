@@ -62,11 +62,13 @@ export class FloatMachine implements IMachine<FloatMachineToken> {
 
   private shouldContinue(): boolean {
     const s = this.state;
-    return this.pointer <= this.source.length ||
-      s !== FloatMachineStates.Invalid ||
-      s !== FloatMachineStates.Double ||
-      s !== FloatMachineStates.Float ||
-      s !== FloatMachineStates.Decimal;
+    return this.pointer <= this.source.length &&
+      !(
+        s === FloatMachineStates.Invalid ||
+        s === FloatMachineStates.Double ||
+        s === FloatMachineStates.Float ||
+        s === FloatMachineStates.Decimal
+      );
   }
 
 
