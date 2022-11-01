@@ -4,7 +4,6 @@ import {BaseToken} from 'structs/BaseToken';
 enum OperatorMachineStates {
   Init,
   Invalid,
-  Equalsafter,
   Plus,
   SecondPlus,
   Minus,
@@ -19,6 +18,8 @@ enum OperatorMachineStates {
   SecondOr,
   Tilde,
   FinalEquals,
+  Negation,
+  Final,
   Accepted,
 }
 
@@ -30,7 +31,7 @@ export type OperatorToken = {
 export class OperatorsMachine implements IMachine<OperatorToken> {
 
   private readonly source: string;
-  private readonly canHaveEqualsAfter = /^[/*%^=!]/
+  private readonly isFinal = /\s/
 
   private start = 0;
   private pointer = 0;
@@ -94,9 +95,6 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       case OperatorMachineStates.FinalEquals:
         this.handleFinalEquals(char);
         break;
-      case OperatorMachineStates.Equalsafter:
-        this.handleEqualsAfter(char);
-        break;
       case OperatorMachineStates.Plus:
         this.handlePlus(char);
         break;
@@ -124,6 +122,9 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       case OperatorMachineStates.Lessthan:
         this.handleLess(char);
         break;
+      case OperatorMachineStates.Negation:
+        this.handleNegative(char);
+        break;
       case OperatorMachineStates.SecondLess:
         this.handleSecondLess(char);
         break;
@@ -135,6 +136,9 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
         break;
       case OperatorMachineStates.Tilde:
         this.handleTilde(char);
+        break;
+      case OperatorMachineStates.Final:
+        this.handleFinal(char);
         break;
     }
   }
@@ -150,8 +154,23 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       return;
     }
 
-    if (this.canHaveEqualsAfter.test(char)) {
-      this.state = OperatorMachineStates.Equalsafter;
+    if (char === '/') {
+      this.state = OperatorMachineStates.SecondGreater;
+      return;
+    }
+
+    if (char === '*') {
+      this.state = OperatorMachineStates.SecondGreater;
+      return;
+    }
+
+    if (char === '%') {
+      this.state = OperatorMachineStates.SecondGreater;
+      return;
+    }
+
+    if (char === '!') {
+      this.state = OperatorMachineStates.SecondGreater;
       return;
     }
 
@@ -183,6 +202,13 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
     this.state = OperatorMachineStates.Invalid;
   }
 
+  private handleNegative(char: string): void {
+    if (char === '=') {
+      this.state = OperatorMachineStates.FinalEquals;
+      return;
+  }
+  }
+
   private handlePlus(char: string): void {
 
     if (char === '+') {
@@ -193,13 +219,27 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
     if (char === '=') {
         this.state = OperatorMachineStates.FinalEquals;
         return;
-      }
+    }
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
 
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleSecondPlus(char: string): void {
 
+    if (char === '+') {
+      this.state = OperatorMachineStates.Accepted;
+      return;
+    }
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
     this.state = OperatorMachineStates.Accepted;
   }
 
@@ -215,39 +255,37 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
         return;
       }
 
-    this.state = OperatorMachineStates.Accepted;
+      if (!this.isFinal.test(char)) {
+        this.state = OperatorMachineStates.Invalid;
+        return;
+      }
+  
+      this.state = OperatorMachineStates.Accepted;
   }
 
   private handleSecondMinus(char: string): void {
 
     if (char === '-') {
-      this.state = OperatorMachineStates.SecondMinus;
+      this.state = OperatorMachineStates.Accepted;
       return;
     }
 
-    if (char === '=') {
-        this.state = OperatorMachineStates.FinalEquals;
-        return;
-      }
-
-    this.state = OperatorMachineStates.Accepted;
-  }
-
-  private handleEqualsAfter(char: string): void {
-
-    if (char === '=') {
-        this.state = OperatorMachineStates.FinalEquals;
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
       return;
     }
-
     this.state = OperatorMachineStates.Accepted;
-
   }
 
   private handleGreater(char: string): void {
 
     if (char === '>') {
         this.state = OperatorMachineStates.SecondGreater;
+      return;
+    }
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
       return;
     }
 
@@ -261,7 +299,12 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       return;
     }
 
-    this.state = OperatorMachineStates.Invalid;
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
+    this.state = OperatorMachineStates.Accepted;
   }
 
   private handleLess(char: string): void {
@@ -271,12 +314,32 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       return;
     }
 
+    if (char === '=') {
+      this.state = OperatorMachineStates.FinalEquals;
+    return;
+  }
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleSecondLess(char: string): void {
 
-    this.state = OperatorMachineStates.Invalid;
+    if (char === '=') {
+      this.state = OperatorMachineStates.FinalEquals;
+    return;
+  }
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
+    this.state = OperatorMachineStates.Accepted;
   }
 
   private handleAmpersand(char: string): void {
@@ -291,10 +354,20 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       return;
       }
 
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleSecondAmpersand(char: string): void {
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
 
     this.state = OperatorMachineStates.Accepted;
   }
@@ -302,7 +375,7 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
   private handleOr(char: string): void {
 
     if (char === '|') {
-      this.state = OperatorMachineStates.SecondAmpersand;
+      this.state = OperatorMachineStates.SecondOr;
       return;
     }
 
@@ -311,21 +384,46 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
         return;
       }
 
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleSecondOr(char: string): void {
+
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
 
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleTilde(char: string): void {
 
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Invalid;
+      return;
+    }
+
     this.state = OperatorMachineStates.Accepted;
   }
 
   private handleFinalEquals(char: string): void {
 
+    if (!this.isFinal.test(char)) {
+      this.state = OperatorMachineStates.Final;
+      return;
+    }
+
     this.state = OperatorMachineStates.Accepted;
+  }
+
+  private handleFinal(char: string): void {
+
+    this.state = OperatorMachineStates.Invalid;
   }
 }
