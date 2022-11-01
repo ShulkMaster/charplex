@@ -20,6 +20,8 @@ export class CommentsMachine implements IMachine<CommentToken> {
 
   private readonly source: string;
   private isLineBreak = /\n/;
+  private comment = ''
+  private commentFinal = ''
   private start = 0;
   private pointer = 0;
   public state: CommentsMachineStates = CommentsMachineStates.Init;
@@ -50,7 +52,7 @@ export class CommentsMachine implements IMachine<CommentToken> {
     if (this.state === CommentsMachineStates.Invalid) return false;
 
     const src = this.source.substring(this.start, this.pointer);
-    const value = src; //this.parseValue(src);
+    const value = this.commentFinal; //this.parseValue(src);
 
     return {
       name: 'CommentToken',
@@ -114,7 +116,12 @@ export class CommentsMachine implements IMachine<CommentToken> {
   private handleDoubleSlash(char: string) : void {
     if (this.isLineBreak.test(char)) {
       this.state = CommentsMachineStates.Accepted;
+      this.commentFinal = this.comment;
+      this.comment = '';
+      return;
     }
+
+    this.comment += char;
   }
 
   private handleCommenting(char: string) : void {
@@ -124,12 +131,16 @@ export class CommentsMachine implements IMachine<CommentToken> {
       return;
     }
 
+    this.comment += char;
   }
 
   private handleAsterisk(char: string) : void {
+    
     if (char === '/') {
-      this.state = CommentsMachineStates.Accepted;
+      this.state = CommentsMachineStates.DoubleSlash;
       return;
     }
+
+    this.comment += char;
   }
 }
