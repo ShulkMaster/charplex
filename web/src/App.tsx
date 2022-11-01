@@ -15,7 +15,17 @@ export type AppState = {
 
 export const App = () => {
 
-  const [code, setCode] = useState('void 5 Main 45 " .47" + void 4');
+  const [code, setCode] = useState('using System;\n' +
+    'public class Addition\n' +
+    '{\n' +
+    '    public static void Main(string[] args)\n' +
+    '    {\n' +
+    '        int num1=35;\n' +
+    '        int num2=30;\n' +
+    '        int sum=num1+num2;\n' +
+    '        Console.WriteLine ("The sum of two numbers: "+sum);\n' +
+    '    }\n' +
+    '}');
   const [state, setState] = useState<AppState>({
     tokens: [],
     table: null,

@@ -38,6 +38,6 @@ const lexer = new Lexer(
   identifierMachine,
 );
 lexer.source = lines;
-for (const token of lexer.tokenStream()) {
-  console.log(token);
-}
+// for (const token of lexer.tokenStream()) {
+//   console.log(token);
+// }

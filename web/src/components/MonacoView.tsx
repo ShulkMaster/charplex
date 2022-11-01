@@ -3,7 +3,11 @@ import {
   FloatMachine,
   IdentifiersMachine,
   IntegerMachine,
-  KeywordMachine, Lexer, MachineToken, OperatorsMachine,
+  KeywordMachine,
+  Lexer,
+  MachineToken,
+  OperatorsMachine,
+  CommentsMachine,
   StringMachine,
   SymbolTableManager,
 } from 'charplex';
@@ -70,10 +74,11 @@ export const MonacoView = (p: MonacoViewProps) => {
         };
       },
       provideDocumentSemanticTokens(model: editor.ITextModel): languages.ProviderResult<languages.SemanticTokens | languages.SemanticTokensEdits> {
-        const lines = model.getLinesContent().join('\n');
-        console.log('running');
+        const code = model.getLinesContent();
+        const lines = code.join('\n');
         const table = new SymbolTableManager();
         const intMachine = new IntegerMachine(lines);
+        const cMachine = new CommentsMachine(lines);
         const stringMachine = new StringMachine(lines);
         const identifierMachine = new IdentifiersMachine(lines, table);
         const floatMachine = new FloatMachine(lines);
@@ -82,6 +87,7 @@ export const MonacoView = (p: MonacoViewProps) => {
 
         const lexer = new Lexer(
           table,
+          cMachine,
           keywordsMachine,
           floatMachine,
           operatorsMachine,
@@ -90,21 +96,9 @@ export const MonacoView = (p: MonacoViewProps) => {
           identifierMachine,
         );
         lexer.source = lines;
-        lexer.registerOnMachineChange(console.log)
-
-        const batch: number[] = [];
-        let last: MachineToken | null = null;
         const tokens: MachineToken[] = [];
         for (const token of lexer.tokenStream()) {
           tokens.push(token);
-          const index = tokenTypes.indexOf(token.kind);
-          if (index === -1) continue;
-          if (last) {
-            batch.push(0, token.range[0] - last.range[0], token.src.length, index, 0);
-          } else {
-            batch.push(0, token.range[0], token.src.length, index, 0);
-          }
-          last = token;
         }
         p.onCode({
           tokens,
@@ -112,7 +106,7 @@ export const MonacoView = (p: MonacoViewProps) => {
         });
         return {
           resultId: undefined,
-          data: new Uint32Array(batch),
+          data: new Uint32Array([]),
         };
       },
       releaseDocumentSemanticTokens(resultId: string | undefined): void {
