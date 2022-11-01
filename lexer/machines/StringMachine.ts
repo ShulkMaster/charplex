@@ -35,12 +35,20 @@ export class StringMachine implements IMachine<StringToken> {
     return this.pointer;
   }
 
+  private isOK(): boolean {
+    const s = this.state;
+    const vString = s === StringMachineStates.VString;
+    const regular = s === StringMachineStates.String;
+    return vString || regular;
+  }
+
   private shouldContinue(): boolean {
     const s = this.state;
+    const length = this.source.length - 1 > this.pointer;
     const vContinue = s === StringMachineStates.VString;
     const regular = s === StringMachineStates.String;
     const invalid = s === StringMachineStates.Invalid;
-    return !vContinue && !regular && !invalid;
+    return length && !vContinue && !regular && !invalid;
   }
 
   public get name() {
@@ -59,10 +67,10 @@ export class StringMachine implements IMachine<StringToken> {
       this.handle(this.source[i]);
     }
 
-    if (this.state === StringMachineStates.Invalid) return false;
+    if (!this.isOK()) return false;
 
     // FDA stops at closing " and does not include it
-    const end = this.pointer  + 1;
+    const end = this.pointer + 1;
     const src = this.source.substring(this.start, end);
     const value = this.parseValue(src);
 
@@ -155,6 +163,10 @@ export class StringMachine implements IMachine<StringToken> {
     if (char === '\\') {
       this.state = StringMachineStates.Scape;
     }
+
+    if (char === '\n') {
+      this.state = StringMachineStates.Invalid;
+    }
   }
 
   private handleVerb(char: string): void {
@@ -182,9 +194,6 @@ export class StringMachine implements IMachine<StringToken> {
       this.state = StringMachineStates.VText;
       return;
     }
-
-
-
     this.state = StringMachineStates.Invalid;
   }
 
@@ -195,7 +204,7 @@ export class StringMachine implements IMachine<StringToken> {
     }
     // removes the " marks from the string
     let modified = src.substring(1, src.length - 1);
-    modified = modified.replace('\\\'', "'");
+    modified = modified.replace('\\\'', '\'');
     modified = modified.replace('\\"', '"');
     modified = modified.replace('\\\\', '\\');
     modified = modified.replace('\\0', '\0');

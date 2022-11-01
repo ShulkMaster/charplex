@@ -36,15 +36,14 @@ editor.defineTheme('charplexTheme', {
     {token: 'IntegerToken', foreground: '66afce'},
 
     {token: 'type', foreground: '1db010'},
-    {token: 'struct', foreground: '0000ff'},
+    {token: 'punctuation', foreground: 'de8004'},
     {token: 'class', foreground: '0000ff', fontStyle: 'bold'},
     {token: 'RealToken', foreground: '007700', fontStyle: 'bold'},
-    {token: 'enum', foreground: '0077ff', fontStyle: 'bold'},
     {token: 'typeParameter', foreground: '1db010'},
     {token: 'function', foreground: '94763a'},
 
     {token: 'member', foreground: '94763a'},
-    {token: 'variable', foreground: '3e5bbf'},
+    {token: 'identifier', foreground: '3e5bbf'},
     {token: 'parameter', foreground: '3e5bbf'},
     {token: 'property', foreground: '3e5bbf'},
     {token: 'label', foreground: '615a60'},
@@ -91,6 +90,7 @@ export const MonacoView = (p: MonacoViewProps) => {
           identifierMachine,
         );
         lexer.source = lines;
+        lexer.registerOnMachineChange(console.log)
 
         const batch: number[] = [];
         let last: MachineToken | null = null;

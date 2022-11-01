@@ -15,7 +15,7 @@ export type AppState = {
 
 export const App = () => {
 
-  const [code, setCode] = useState('void 5 Main 45 .47 + void 4');
+  const [code, setCode] = useState('void 5 Main 45 " .47" + void 4');
   const [state, setState] = useState<AppState>({
     tokens: [],
     table: null,
