@@ -4,7 +4,6 @@ import {ColumnsType} from 'antd/es/table';
 import {useEffect, useState} from 'react';
 
 export type FileBarProps = {
-  onRun: () => void;
   sb: SymbolTable | null;
 }
 
@@ -16,11 +15,7 @@ export const FileBar = (p: FileBarProps) => {
   }, [p.sb]);
 
   if (!state) {
-    return (
-      <div className="file-bar">
-        <Button onClick={p.onRun} type="primary" size="large">Run</Button>
-      </div>
-    );
+    return <div className="file-bar"/>;
   }
 
   const columns: ColumnsType<Symbol> = [
@@ -45,8 +40,6 @@ export const FileBar = (p: FileBarProps) => {
 
   return (
     <div className="file-bar">
-      <Button onClick={p.onRun} type="primary" size="large">Run</Button>
-      <Divider/>
       <p>{state.displayName}</p>
       <Table dataSource={Object.values(state.symbols)} columns={columns} rowKey="name" pagination={false}/>
       <Divider/>

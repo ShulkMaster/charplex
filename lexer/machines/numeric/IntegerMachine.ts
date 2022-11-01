@@ -82,8 +82,6 @@ export class IntegerMachine implements IMachine<IntegerToken> {
     const unsigned = this.isUnsigned();
     const end = unsigned ? this.pointer + 1 : this.pointer;
     const src = this.source.substring(this.start, end);
-    console.log(this.start, end);
-    console.log(src);
     const value = this.parseValue(src, unsigned);
 
     return {
