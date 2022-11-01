@@ -39,7 +39,7 @@ jobs:
       - name: Building Lexer
         run: npm run build -w lexer
       - name: Building Website
-        run: npm run build -w web -- --base=/charplex
+        run: npm run build -w web -- --base=/charplex/
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
