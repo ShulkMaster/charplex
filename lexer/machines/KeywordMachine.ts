@@ -63,6 +63,8 @@ export class KeywordMachine implements IMachine<KeywordToken> {
       src,
       value,
       range: [this.start, this.pointer],
+      r: 0,
+      c: 0,
     };
   }
 
@@ -76,7 +78,7 @@ export class KeywordMachine implements IMachine<KeywordToken> {
         break;
       case KeywordMachineStates.isKeyword:
         this.handlerIsKeyword(this.word);
-        break; 
+        break;
     }
   }
 

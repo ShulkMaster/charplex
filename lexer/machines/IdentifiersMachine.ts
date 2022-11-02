@@ -20,7 +20,7 @@ export type IdentifierToken = {
 export class IdentifiersMachine implements IMachine<IdentifierToken> {
 
   private readonly source: string;
-  private readonly isLetter = /^[A-Za-z]+$/
+  private readonly isLetter = /^[A-Za-z]+$/;
   private readonly isDigit = /\d/;
   private start = 0;
   private pointer = 0;
@@ -41,9 +41,10 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
     this.state = IdentifierMachineStates.Init;
   }
 
-  private shouldStop() : boolean {
+  private shouldStop(): boolean {
     return this.state === IdentifierMachineStates.Invalid ||
-      this.state === IdentifierMachineStates.Accepted || this.pointer > this.source.length
+      this.state === IdentifierMachineStates.Accepted ||
+      this.pointer >= this.source.length;
   }
 
   public getPointer(): number {
@@ -66,6 +67,8 @@ export class IdentifiersMachine implements IMachine<IdentifierToken> {
       src,
       value,
       range: [this.start, this.pointer],
+      r: 0,
+      c: 0,
     };
     this._sm.registerSymbol(identifier);
     return identifier;

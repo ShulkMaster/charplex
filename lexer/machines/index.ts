@@ -53,11 +53,18 @@ export type SemiColon = {
   kind: 'punctuation';
 } & BaseToken;
 
+export type DotToken = {
+  name: 'dot';
+  kind: 'punctuation';
+} & BaseToken;
+
 export type ErrorToken = {
   name: 'Error';
   kind: 'error';
   src: string;
   range: Range;
+  r: number,
+  c: number,
 }
 
 export type MachineToken = |
@@ -67,6 +74,7 @@ export type MachineToken = |
   OpenParenthesis |
   CloseParenthesis |
   SemiColon |
+  DotToken |
   CommentToken |
   IntegerToken |
   FloatMachineToken |

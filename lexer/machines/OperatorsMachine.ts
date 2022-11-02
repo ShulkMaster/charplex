@@ -84,6 +84,8 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
       src,
       value,
       range: [this.start, this.pointer],
+      r: 0,
+      c: 0,
     };
   }
 
@@ -244,7 +246,7 @@ export class OperatorsMachine implements IMachine<OperatorToken> {
         this.state = OperatorMachineStates.FinalEquals;
         return;
     }
-  
+
     this.state = OperatorMachineStates.Accepted;
   }
 

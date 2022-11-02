@@ -91,6 +91,8 @@ export class IntegerMachine implements IMachine<IntegerToken> {
       unsigned,
       value,
       range: [this.start, end],
+      r: 0,
+      c: 0,
     };
   }
 

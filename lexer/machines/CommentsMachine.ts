@@ -40,7 +40,7 @@ export class CommentsMachine implements IMachine<CommentToken> {
 
   private shouldStop() : boolean {
     return this.state === CommentsMachineStates.Invalid ||
-      this.state === CommentsMachineStates.Accepted || this.pointer > this.source.length 
+      this.state === CommentsMachineStates.Accepted || this.pointer > this.source.length
   }
 
   isAccepted(): false | CommentToken {
@@ -60,6 +60,8 @@ export class CommentsMachine implements IMachine<CommentToken> {
       src,
       value,
       range: [this.start, this.pointer],
+      r: 0,
+      c: 0,
     };
   }
 
@@ -84,7 +86,7 @@ export class CommentsMachine implements IMachine<CommentToken> {
         break;
       case CommentsMachineStates.Asterisk:
         this.handleAsterisk(char);
-        break;  
+        break;
     }
   }
 
@@ -125,7 +127,7 @@ export class CommentsMachine implements IMachine<CommentToken> {
   }
 
   private handleCommenting(char: string) : void {
-    
+
     if (char === '*') {
       this.state = CommentsMachineStates.Asterisk;
       return;
@@ -135,7 +137,7 @@ export class CommentsMachine implements IMachine<CommentToken> {
   }
 
   private handleAsterisk(char: string) : void {
-    
+
     if (char === '/') {
       this.state = CommentsMachineStates.DoubleSlash;
       return;

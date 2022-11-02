@@ -44,14 +44,9 @@ editor.defineTheme('charplexTheme', {
     {token: 'punctuation', foreground: 'de8004'},
     {token: 'class', foreground: '0000ff', fontStyle: 'bold'},
     {token: 'RealToken', foreground: '007700', fontStyle: 'bold'},
-    {token: 'typeParameter', foreground: '1db010'},
-    {token: 'function', foreground: '94763a'},
 
-    {token: 'member', foreground: '94763a'},
-    {token: 'identifier', foreground: '3e5bbf'},
-    {token: 'parameter', foreground: '3e5bbf'},
-    {token: 'property', foreground: '3e5bbf'},
-    {token: 'label', foreground: '615a60'},
+
+    {token: 'identifier', foreground: 'bfa13e'},
 
     {token: 'type.static', fontStyle: 'bold'},
     {token: 'string', foreground: 'ff0000', fontStyle: 'bold'},
@@ -75,9 +70,7 @@ export const MonacoView = (p: MonacoViewProps) => {
         };
       },
       provideDocumentSemanticTokens(model: editor.ITextModel): languages.ProviderResult<languages.SemanticTokens | languages.SemanticTokensEdits> {
-        const code = model.getLinesContent();
-        const deltas = model.getLinesContent().map(l => l.length + 1);
-        const lines = code.join('\n');
+        const lines = model.getValue();
         const table = new SymbolTableManager();
         const intMachine = new IntegerMachine(lines);
         const cMachine = new CommentsMachine(lines);
@@ -100,28 +93,20 @@ export const MonacoView = (p: MonacoViewProps) => {
         lexer.source = lines;
         const tokens: MachineToken[] = [];
         const batch: number[] = [];
-        let lastLine = 0;
-        let delta = 0;
-        let lastToken: MachineToken | undefined = undefined;
+        let prevLine = 0;
+        let prevChar = 0;
         for (const token of lexer.tokenStream()) {
           tokens.push(token);
           const index = tokenTypes.indexOf(token.kind);
           if (index === -1) continue;
-          const cline = lexer.currentLine;
 
-          if (lastToken) {
-            batch.push(cline - lastLine, token.range[0] - lastToken.range[0], token.src.length, index, 0);
+          if (token.r === prevLine) {
+            batch.push(0, token.r - prevChar, token.src.length, index, 0);
           } else {
-            batch.push(cline - lastLine, token.range[0] - delta, token.src.length, index, 0);
+            batch.push(token.r - prevLine, token.r, token.src.length, index, 0);
           }
-          if (lastLine !== cline) {
-            lastToken = undefined;
-            lastLine = cline;
-            delta += deltas.shift() || 0;
-            delta++;
-          } else {
-            lastToken = token;
-          }
+          prevLine = token.r;
+          prevChar = token.c;
         }
         p.onCode({
           tokens,

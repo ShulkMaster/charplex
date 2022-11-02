@@ -2,6 +2,8 @@ import {
   CloseBrace,
   CloseBracket,
   CloseParenthesis,
+  DotToken,
+  ErrorToken,
   IMachine,
   MachineToken,
   OpenBrace,
@@ -26,6 +28,7 @@ export class Lexer {
   private listener: MachineChangeCallback | undefined = undefined;
   private src: string = '';
   private line: number = 0;
+  private col: number = 0;
   private _state = LexerStates.Init;
   private lastErrorRange: Range | undefined = undefined;
   private readonly table: SymbolTableManager;
@@ -78,6 +81,8 @@ export class Lexer {
       openScope: '',
       range: [index, index + 1],
       src: '{',
+      r: this.line,
+      c: this.col
     };
     return this.table.openScope(opener);
   }
@@ -89,6 +94,8 @@ export class Lexer {
       name: 'CloseBrace',
       range: [index, index + 1],
       src: '}',
+      r: this.line,
+      c: this.col
     };
     return this.table.closeScope(closer);
   }
@@ -99,6 +106,8 @@ export class Lexer {
       name: 'OpenBracket',
       range: [index, index + 1],
       src: '[',
+      r: this.line,
+      c: this.col
     };
   }
 
@@ -108,6 +117,8 @@ export class Lexer {
       name: 'CloseBracket',
       range: [index, index + 1],
       src: ']',
+      r: this.line,
+      c: this.col
     };
   }
 
@@ -117,6 +128,8 @@ export class Lexer {
       name: 'OpenParenthesis',
       range: [index, index + 1],
       src: '(',
+      r: this.line,
+      c: this.col
     };
   }
 
@@ -126,6 +139,8 @@ export class Lexer {
       name: 'CloseParenthesis',
       range: [index, index + 1],
       src: ')',
+      r: this.line,
+      c: this.col
     };
   }
 
@@ -135,6 +150,19 @@ export class Lexer {
       name: 'SemiColon',
       range: [index, index + 1],
       src: ';',
+      r: this.line,
+      c: this.col
+    };
+  }
+
+  private makeDotToken(index: number): DotToken {
+    return {
+      kind: 'punctuation',
+      name: 'dot',
+      range: [index, index + 1],
+      src: '.',
+      r: this.line,
+      c: this.col
     };
   }
 
@@ -149,56 +177,82 @@ export class Lexer {
         case ' ':
         case '\t':
           wasSent = true;
+          this.col++;
           break;
         case '\n':
         case '\r':
           this.line++;
-          console.log('wup ' + this.line);
+          this.col = 0;
+          console.log(this.src.split('\n')[this.line]);
           wasSent = true;
           break;
         case '{':
           yield this.makeOpenBraceToken(i);
+          this.col++;
           wasSent = true;
           break;
         case '}':
           yield this.makeCloseBraceToken(i);
+          this.col++;
           wasSent = true;
           break;
         case '[':
           yield this.makeOpenBracketToken(i);
+          this.col++;
           wasSent = true;
           break;
         case ']':
           yield this.makeCloseBracketToken(i);
+          this.col++;
           wasSent = true;
           break;
         case '(':
           yield this.makeOpenParenthesisToken(i);
+          this.col++;
           wasSent = true;
           break;
         case ')':
           yield this.makeCloseParenthesisToken(i);
+          this.col++;
           wasSent = true;
           break;
         case ';':
           yield this.makeSemiColon(i);
+          this.col++;
+          wasSent = true;
+          break;
+        case '.':
+          yield this.makeDotToken(i);
+          this.col++;
           wasSent = true;
           break;
         default:
           const token = this.runMachines(i);
           if (token) {
             wasSent = true;
+            token.c = this.col;
+            token.r = this.line;
+            this.col = token.range[1] - Math.max(1, i);
             i = Math.max(0, this.rangeEnd(token.range) - 1);
             yield token;
           } else {
             wasSent = false;
+            this.col++;
             this.setErrorRange(i);
           }
       }
       if (wasSent && this.lastErrorRange) {
         const start = this.lastErrorRange[0];
         const src = this.src.substring(start, i);
-        yield {kind: 'error', name: 'Error', range: this.lastErrorRange, src};
+        const x: ErrorToken = {
+          kind: 'error',
+          name: 'Error',
+          range: this.lastErrorRange,
+          src,
+          r: this.line,
+          c: this.lastErrorRange[0] - i
+        };
+        yield x;
         this.lastErrorRange = undefined;
       }
     }

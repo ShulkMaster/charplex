@@ -91,6 +91,8 @@ export class FloatMachine implements IMachine<FloatMachineToken> {
       src,
       value,
       range: [this.start, this.pointer],
+      r: 0,
+      c: 0,
     };
 
   }

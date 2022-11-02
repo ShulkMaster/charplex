@@ -80,6 +80,8 @@ export class StringMachine implements IMachine<StringToken> {
       kind: 'string',
       src,
       value,
+      r: 0,
+      c: 0,
     };
   }
 
