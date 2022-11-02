@@ -25,6 +25,7 @@ export class Lexer {
   private readonly _machines: IMachine<MachineToken>[];
   private listener: MachineChangeCallback | undefined = undefined;
   private src: string = '';
+  private line: number = 0;
   private _state = LexerStates.Init;
   private lastErrorRange: Range | undefined = undefined;
   private readonly table: SymbolTableManager;
@@ -38,6 +39,7 @@ export class Lexer {
   public set source(src: string) {
     this.src = src;
     this._state = LexerStates.Init;
+    this.line = 0;
   }
 
   private rangeEnd(range: Range): number {
@@ -46,6 +48,10 @@ export class Lexer {
 
   public get state(): LexerStates {
     return this._state;
+  }
+
+  public get currentLine(): number {
+    return this.line;
   }
 
   public registerOnMachineChange(m: MachineChangeCallback): void {
@@ -142,8 +148,12 @@ export class Lexer {
       switch (char) {
         case ' ':
         case '\t':
+          wasSent = true;
+          break;
         case '\n':
         case '\r':
+          this.line++;
+          console.log('wup ' + this.line);
           wasSent = true;
           break;
         case '{':
