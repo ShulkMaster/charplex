@@ -1,20 +1,20 @@
-import {IntegerToken} from './numeric/IntegerMachine';
-import { IdentifierToken } from './IdentifiersMachine'
-import {KeywordToken} from './KeywordMachine'
-import {OperatorToken} from './OperatorsMachine';
-import {StringToken} from './StringMachine';
-import { CommentToken } from './CommentsMachine';
-import {BaseToken, Range} from 'structs';
-import {FloatMachineToken} from './numeric/FloatMachine';
+import {IntegerToken} from './numeric/IntegerMachine.js';
+import { IdentifierToken } from './IdentifiersMachine.js'
+import {KeywordToken} from './KeywordMachine.js'
+import {OperatorToken} from './OperatorsMachine.js';
+import {StringToken} from './StringMachine.js';
+import { CommentToken } from './CommentsMachine.js';
+import {BaseToken, Range} from 'structs/index.js';
+import {FloatMachineToken} from './numeric/FloatMachine.js';
 
-export * from './IMachine';
-export * from './StringMachine';
-export * from './numeric/IntegerMachine';
-export * from './numeric/FloatMachine';
-export * from './IdentifiersMachine';
-export * from './KeywordMachine';
-export * from './OperatorsMachine';
-export * from './CommentsMachine';
+export * from './IMachine.js';
+export * from './StringMachine.js';
+export * from './numeric/IntegerMachine.js';
+export * from './numeric/FloatMachine.js';
+export * from './IdentifiersMachine.js';
+export * from './KeywordMachine.js';
+export * from './OperatorsMachine.js';
+export * from './CommentsMachine.js';
 
 export type OpenBrace = {
   name: 'OpenBrace';

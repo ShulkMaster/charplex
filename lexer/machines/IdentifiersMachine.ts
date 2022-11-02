@@ -1,6 +1,5 @@
-import {IMachine} from './IMachine';
-import {BaseToken} from 'structs/BaseToken';
-import {ISymbolManager} from 'structs';
+import {IMachine} from './IMachine.js';
+import {BaseToken, ISymbolManager} from 'structs/index.js';
 
 enum IdentifierMachineStates {
   Init,

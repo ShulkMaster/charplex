@@ -10,8 +10,8 @@ import {
   OpenBracket,
   OpenParenthesis,
   SemiColon,
-} from './machines';
-import {Range, SymbolTableManager} from 'structs';
+} from 'machines/index.js';
+import {Range, SymbolTableManager} from './structs/index.js';
 
 enum LexerStates {
   Init,
@@ -176,14 +176,13 @@ export class Lexer {
       switch (char) {
         case ' ':
         case '\t':
+        case '\r':
           wasSent = true;
           this.col++;
           break;
         case '\n':
-        case '\r':
           this.line++;
           this.col = 0;
-          console.log(this.src.split('\n')[this.line]);
           wasSent = true;
           break;
         case '{':
@@ -232,7 +231,7 @@ export class Lexer {
             wasSent = true;
             token.c = this.col;
             token.r = this.line;
-            this.col = token.range[1] - Math.max(1, i);
+            this.col = token.src.length;
             i = Math.max(0, this.rangeEnd(token.range) - 1);
             yield token;
           } else {

@@ -1,5 +1,5 @@
-import {IMachine} from 'machines';
-import {BaseToken} from 'structs/BaseToken';
+import {IMachine} from 'machines/index.js';
+import {BaseToken} from 'structs/index.js';
 
 enum IntegerMachineStates {
   Init,

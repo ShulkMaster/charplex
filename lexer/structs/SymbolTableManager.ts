@@ -1,7 +1,7 @@
-import {SymbolTable} from './SymbolTable';
-import {CloseBrace, IdentifierToken, OpenBrace} from 'machines';
+import {SymbolTable} from './SymbolTable.js';
+import {CloseBrace, IdentifierToken, OpenBrace} from 'machines/index.js';
 import {MD5} from 'object-hash';
-import {ISymbolManager} from './ISymbolManager';
+import {ISymbolManager} from './ISymbolManager.js';
 
 export class SymbolTableManager implements ISymbolManager {
   private readonly globalScope: SymbolTable;

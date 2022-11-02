@@ -1,5 +1,5 @@
-import {IMachine} from './IMachine';
-import {BaseToken} from 'structs/BaseToken';
+import {IMachine} from './IMachine.js';
+import {BaseToken} from 'structs/index.js';
 
 enum CommentsMachineStates {
   Init,

@@ -4,7 +4,7 @@
   "description": "Typescript test implementation for a C# lexer",
   "type": "module",
   "main": "dist/index.js",
-  "module": "index.ts",
+  "module": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "tsc -p tsconfig.json && node dist/index.js",

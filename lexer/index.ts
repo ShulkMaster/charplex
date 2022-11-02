@@ -6,14 +6,14 @@ import {
   KeywordMachine,
   OperatorsMachine,
   StringMachine,
-} from './machines';
-import {SymbolTableManager} from './structs';
-import {Lexer} from './lexer';
+} from './machines/index.js';
+import {SymbolTableManager} from './structs/index.js';
+import {Lexer} from './lexer.js';
 
-export * from './lexer';
-export * from './machines';
-export * from './structs';
-export * from './lang';
+export * from './lexer.js';
+export * from './machines/index.js';
+export * from './structs/index.js';
+export * from './lang.js';
 
 const code = 'using System;\n' +
   'public class Addition\n' +
@@ -47,4 +47,9 @@ const lexer = new Lexer(
   stringMachine,
   identifierMachine,
 );
+
+lexer.source = code;
+for (const token of lexer.tokenStream()) {
+  console.log(token);
+}
 

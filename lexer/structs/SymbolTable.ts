@@ -1,4 +1,4 @@
-import {MachineToken} from 'machines';
+import {MachineToken} from 'machines/index.js';
 
 export type SymbolUsage = {
   row: number;

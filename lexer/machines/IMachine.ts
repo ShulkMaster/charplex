@@ -1,4 +1,4 @@
-import {BaseToken} from 'structs/BaseToken';
+import {BaseToken} from 'structs/index.js';
 
 export interface IMachine<T extends BaseToken> {
   getPointer(): number;
